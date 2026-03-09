@@ -1,0 +1,849 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Test: Vorurteilsbewusste Reflexion für pädagogische Fachkräfte</title>
+    <style>
+        :root {
+            --color-bg: #fcfcf9;
+            --color-surface: #ffffff;
+            --color-text: #13343b;
+            --color-text-secondary: #626c6c;
+            --color-primary: #21808d;
+            --color-primary-hover: #1d7480;
+            --color-border: rgba(94, 82, 64, 0.2);
+            --color-error: #c0152f;
+            --color-success: #21808d;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: var(--color-bg);
+            color: var(--color-text);
+            line-height: 1.6;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+        }
+
+        .header {
+            text-align: center;
+            margin-bottom: 40px;
+            padding: 30px;
+            background: var(--color-surface);
+            border-radius: 12px;
+            border: 1px solid var(--color-border);
+        }
+
+        .header h1 {
+            font-size: 28px;
+            margin-bottom: 15px;
+            color: var(--color-text);
+        }
+
+        .header p {
+            color: var(--color-text-secondary);
+            font-size: 16px;
+            line-height: 1.8;
+        }
+
+        .intro-box {
+            background: var(--color-surface);
+            padding: 25px;
+            border-radius: 12px;
+            border: 1px solid var(--color-border);
+            margin-bottom: 30px;
+        }
+
+        .intro-box h2 {
+            font-size: 20px;
+            margin-bottom: 15px;
+            color: var(--color-primary);
+        }
+
+        .intro-box ul {
+            margin-left: 20px;
+            color: var(--color-text-secondary);
+        }
+
+        .intro-box li {
+            margin-bottom: 8px;
+        }
+
+        .question-card {
+            background: var(--color-surface);
+            padding: 30px;
+            border-radius: 12px;
+            border: 1px solid var(--color-border);
+            margin-bottom: 25px;
+            display: none;
+        }
+
+        .question-card.active {
+            display: block;
+        }
+
+        .question-number {
+            font-size: 14px;
+            color: var(--color-text-secondary);
+            margin-bottom: 10px;
+        }
+
+        .question-text {
+            font-size: 20px;
+            font-weight: 600;
+            margin-bottom: 25px;
+            color: var(--color-text);
+        }
+
+        .situation-text {
+            background: rgba(33, 128, 141, 0.08);
+            padding: 20px;
+            border-radius: 8px;
+            margin-bottom: 25px;
+            font-style: italic;
+            color: var(--color-text);
+            border-left: 4px solid var(--color-primary);
+        }
+
+        .options {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+
+        .option {
+            background: var(--color-surface);
+            border: 2px solid var(--color-border);
+            padding: 18px;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            display: flex;
+            align-items: flex-start;
+            gap: 12px;
+        }
+
+        .option:hover {
+            border-color: var(--color-primary);
+            background: rgba(33, 128, 141, 0.05);
+        }
+
+        .option.selected {
+            border-color: var(--color-primary);
+            background: rgba(33, 128, 141, 0.1);
+        }
+
+        .option input[type="radio"] {
+            margin-top: 3px;
+            width: 18px;
+            height: 18px;
+            cursor: pointer;
+        }
+
+        .option-text {
+            flex: 1;
+            color: var(--color-text);
+        }
+
+        .button-group {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 25px;
+            gap: 15px;
+        }
+
+        .btn {
+            padding: 14px 30px;
+            border: none;
+            border-radius: 8px;
+            font-size: 16px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+
+        .btn-primary {
+            background: var(--color-primary);
+            color: white;
+        }
+
+        .btn-primary:hover {
+            background: var(--color-primary-hover);
+        }
+
+        .btn-secondary {
+            background: rgba(94, 82, 64, 0.12);
+            color: var(--color-text);
+        }
+
+        .btn-secondary:hover {
+            background: rgba(94, 82, 64, 0.2);
+        }
+
+        .btn:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+
+        .progress-bar {
+            width: 100%;
+            height: 8px;
+            background: rgba(94, 82, 64, 0.12);
+            border-radius: 4px;
+            margin-bottom: 30px;
+            overflow: hidden;
+        }
+
+        .progress-fill {
+            height: 100%;
+            background: var(--color-primary);
+            transition: width 0.3s ease;
+        }
+
+        .result-section {
+            display: none;
+        }
+
+        .result-section.active {
+            display: block;
+        }
+
+        .result-header {
+            background: var(--color-primary);
+            color: white;
+            padding: 30px;
+            border-radius: 12px;
+            text-align: center;
+            margin-bottom: 30px;
+        }
+
+        .result-header h2 {
+            font-size: 28px;
+            margin-bottom: 10px;
+        }
+
+        .bias-card {
+            background: var(--color-surface);
+            padding: 25px;
+            border-radius: 12px;
+            border: 1px solid var(--color-border);
+            margin-bottom: 20px;
+        }
+
+        .bias-card h3 {
+            font-size: 20px;
+            margin-bottom: 15px;
+            color: var(--color-primary);
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .bias-level {
+            display: inline-block;
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-size: 14px;
+            font-weight: 600;
+        }
+
+        .level-hoch {
+            background: rgba(192, 21, 47, 0.15);
+            color: var(--color-error);
+        }
+
+        .level-mittel {
+            background: rgba(230, 129, 97, 0.15);
+            color: #a84b2f;
+        }
+
+        .level-niedrig {
+            background: rgba(33, 128, 141, 0.15);
+            color: var(--color-primary);
+        }
+
+        .bias-description {
+            color: var(--color-text-secondary);
+            margin-bottom: 15px;
+            line-height: 1.8;
+        }
+
+        .recommendations {
+            background: rgba(33, 128, 141, 0.08);
+            padding: 20px;
+            border-radius: 8px;
+            margin-top: 15px;
+        }
+
+        .recommendations h4 {
+            font-size: 16px;
+            margin-bottom: 12px;
+            color: var(--color-text);
+        }
+
+        .recommendations ul {
+            margin-left: 20px;
+        }
+
+        .recommendations li {
+            margin-bottom: 8px;
+            color: var(--color-text-secondary);
+        }
+
+        .reflection-box {
+            background: var(--color-surface);
+            padding: 25px;
+            border-radius: 12px;
+            border: 1px solid var(--color-border);
+            margin-top: 30px;
+        }
+
+        .reflection-box h3 {
+            font-size: 20px;
+            margin-bottom: 15px;
+            color: var(--color-primary);
+        }
+
+        .reflection-box p {
+            color: var(--color-text-secondary);
+            line-height: 1.8;
+            margin-bottom: 15px;
+        }
+
+        .start-screen {
+            text-align: center;
+        }
+
+        .start-btn {
+            font-size: 18px;
+            padding: 18px 40px;
+            margin-top: 20px;
+        }
+
+        @media (max-width: 768px) {
+            .container {
+                padding: 10px;
+            }
+            
+            .header h1 {
+                font-size: 24px;
+            }
+            
+            .question-card {
+                padding: 20px;
+            }
+            
+            .button-group {
+                flex-direction: column;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>Test zur Vorurteilsbewussten Reflexion</h1>
+            <p>Für pädagogische Fachkräfte in Kita und Schule</p>
+        </div>
+
+        <div id="startScreen" class="start-screen">
+            <div class="intro-box">
+                <h2>Über diesen Test</h2>
+                <p style="margin-bottom: 15px;">Dieser Test hilft Ihnen dabei, Ihre eigenen Vorurteile und unbewussten Denkmuster zu erkennen und zu reflektieren. Er ist ein Instrument zur Selbstreflexion und dient der persönlichen Weiterentwicklung.</p>
+                
+                <h2 style="margin-top: 25px;">Was Sie erwartet:</h2>
+                <ul>
+                    <li><strong>15 Situationen</strong> aus dem Kita- und Schulalltag</li>
+                    <li><strong>Reflexionsfragen</strong> zu Ihren spontanen Reaktionen</li>
+                    <li><strong>Persönliche Auswertung</strong> zu verschiedenen Diskriminierungskategorien</li>
+                    <li><strong>Konkrete Handlungsempfehlungen</strong> für Ihre pädagogische Praxis</li>
+                </ul>
+
+                <h2 style="margin-top: 25px;">Wichtige Hinweise:</h2>
+                <ul>
+                    <li>Es gibt keine "richtigen" oder "falschen" Antworten</li>
+                    <li>Antworten Sie spontan und ehrlich</li>
+                    <li>Der Test dauert ca. 15-20 Minuten</li>
+                    <li>Ihre Daten werden nicht gespeichert</li>
+                </ul>
+
+                <h2 style="margin-top: 25px;">Gemessene Dimensionen:</h2>
+                <ul>
+                    <li><strong>Linguizismus:</strong> Vorurteile aufgrund von Sprache</li>
+                    <li><strong>Rassismus:</strong> Vorurteile aufgrund von Hautfarbe/Herkunft</li>
+                    <li><strong>Sexismus:</strong> Vorurteile aufgrund von Geschlecht</li>
+                    <li><strong>Ableismus:</strong> Vorurteile aufgrund von Behinderung</li>
+                    <li><strong>Klassismus:</strong> Vorurteile aufgrund sozialer Herkunft</li>
+                    <li><strong>Adultismus:</strong> Vorurteile gegenüber Kindern aufgrund ihres Alters</li>
+                </ul>
+            </div>
+
+            <button class="btn btn-primary start-btn" onclick="startTest()">Test starten</button>
+        </div>
+
+        <div id="testScreen" style="display: none;">
+            <div class="progress-bar">
+                <div class="progress-fill" id="progressFill"></div>
+            </div>
+
+            <div id="questionsContainer"></div>
+
+            <div class="button-group">
+                <button class="btn btn-secondary" id="prevBtn" onclick="prevQuestion()" style="display: none;">Zurück</button>
+                <button class="btn btn-primary" id="nextBtn" onclick="nextQuestion()" disabled>Weiter</button>
+            </div>
+        </div>
+
+        <div id="resultScreen" class="result-section"></div>
+    </div>
+
+    <script>
+        const questions = [
+            {
+                id: 1,
+                category: 'linguizismus',
+                situation: 'Ein Kind spricht zu Hause hauptsächlich Türkisch. Im Morgenkreis sagt es etwas auf Türkisch zu einem anderen Kind.',
+                question: 'Was ist Ihre erste innere Reaktion?',
+                options: [
+                    { text: 'Das Kind soll lernen, im Kindergarten nur Deutsch zu sprechen', score: 3 },
+                    { text: 'Ich frage das Kind, was es gesagt hat und übersetze es für die anderen', score: 0 },
+                    { text: 'Ich ermutige das Kind, seinen Satz auch auf Deutsch zu wiederholen', score: 1 },
+                    { text: 'Ich lasse es zu und sage: "In unserer Gruppe sprechen wir viele Sprachen"', score: 0 }
+                ]
+            },
+            {
+                id: 2,
+                category: 'rassismus',
+                situation: 'Ein Kind mit dunkler Hautfarbe malt sich selbst mit einem hellrosa Stift.',
+                question: 'Was denken Sie spontan?',
+                options: [
+                    { text: 'Das Kind hat keine passenden Stifte gefunden', score: 1 },
+                    { text: 'Das Kind möchte lieber hell sein – das ist traurig', score: 2 },
+                    { text: 'Ich sollte überprüfen, ob wir Stifte für alle Hauttöne haben', score: 0 },
+                    { text: 'Kinder malen sich oft unrealistisch, das ist normal', score: 2 }
+                ]
+            },
+            {
+                id: 3,
+                category: 'sexismus',
+                situation: 'Ein Junge (4 Jahre) möchte sich in der Verkleidungsecke ein Kleid anziehen.',
+                question: 'Welche Reaktion liegt Ihnen spontan am nächsten?',
+                options: [
+                    { text: 'Ich lenke ihn zu "Jungensachen" wie Ritterrüstung oder Polizeiuniform', score: 3 },
+                    { text: 'Ich erlaube es, aber fühle mich unwohl', score: 2 },
+                    { text: 'Ich erlaube es und beobachte, ob andere Kinder reagieren', score: 0 },
+                    { text: 'Ich ermutige ihn: "Du kannst dich anziehen, wie du möchtest"', score: 0 }
+                ]
+            },
+            {
+                id: 4,
+                category: 'ableismus',
+                situation: 'Ein Kind mit Rollstuhl möchte beim Fangspiel mitmachen. Die anderen Kinder sagen: "Du bist zu langsam."',
+                question: 'Was ist Ihre erste Handlungsidee?',
+                options: [
+                    { text: 'Ich schlage dem Kind vor, als Schiedsrichter zu fungieren', score: 3 },
+                    { text: 'Ich erkläre den anderen, dass das nicht nett ist', score: 2 },
+                    { text: 'Ich ändere die Spielregel: Wer gefangen wird, muss eine Runde aussetzen', score: 0 },
+                    { text: 'Ich sage klar: "Bei uns spielt jedes Kind mit. Wir passen die Regeln an"', score: 0 }
+                ]
+            },
+            {
+                id: 5,
+                category: 'klassismus',
+                situation: 'Ein Kind kommt montags müde in die Kita und erzählt, es war am Wochenende nicht im Urlaub, sondern zu Hause.',
+                question: 'Was denken Sie spontan?',
+                options: [
+                    { text: 'Die Eltern könnten sich mehr Mühe geben, etwas mit dem Kind zu unternehmen', score: 3 },
+                    { text: 'Vielleicht haben die Eltern wenig Geld für Ausflüge', score: 1 },
+                    { text: 'Nicht alle Familien haben die gleichen Möglichkeiten – das ist okay', score: 0 },
+                    { text: 'Ich frage interessiert nach, was das Kind zu Hause gemacht hat', score: 0 }
+                ]
+            },
+            {
+                id: 6,
+                category: 'linguizismus',
+                situation: 'Zwei Eltern unterhalten sich in der Abholsituation auf Polnisch. Sie verstehen kein Wort.',
+                question: 'Was geht Ihnen durch den Kopf?',
+                options: [
+                    { text: 'Ich fühle mich ausgeschlossen und finde das unhöflich', score: 3 },
+                    { text: 'Ich frage mich, ob sie über mich sprechen', score: 2 },
+                    { text: 'Ich denke: Die beiden sprechen ihre Muttersprache, das ist schön', score: 0 },
+                    { text: 'Ich begrüße sie freundlich und respektiere ihre Sprachwahl', score: 0 }
+                ]
+            },
+            {
+                id: 7,
+                category: 'adultismus',
+                situation: 'Ein Kind widerspricht Ihnen laut: "Nein, das will ich nicht!"',
+                question: 'Was ist Ihre spontane innere Reaktion?',
+                options: [
+                    { text: 'Das Kind ist respektlos und muss lernen, auf Erwachsene zu hören', score: 3 },
+                    { text: 'Ich bin verärgert und denke: "Ich bin hier die Erzieherin!"', score: 2 },
+                    { text: 'Ich frage mich: Hat das Kind einen guten Grund für sein "Nein"?', score: 0 },
+                    { text: 'Ich respektiere das "Nein" und frage nach den Bedürfnissen des Kindes', score: 0 }
+                ]
+            },
+            {
+                id: 8,
+                category: 'rassismus',
+                situation: 'Ein Kind sagt zu einem anderen: "Deine Haut sieht aus wie Schokolade!"',
+                question: 'Wie reagieren Sie?',
+                options: [
+                    { text: 'Ich sage nichts, das war doch nett gemeint', score: 3 },
+                    { text: 'Ich sage: "Wir vergleichen Menschen nicht mit Essen"', score: 0 },
+                    { text: 'Ich erkläre: "Haut hat viele verschiedene Töne, das ist schön"', score: 0 },
+                    { text: 'Ich lächle und denke: "Kinder sagen süße Sachen"', score: 2 }
+                ]
+            },
+            {
+                id: 9,
+                category: 'sexismus',
+                situation: 'Beim Aufräumen sagen Sie zu den Kindern: "Die Jungs helfen beim Tragen, die Mädchen beim Sortieren."',
+                question: 'Würden Sie das so sagen?',
+                options: [
+                    { text: 'Ja, das ist doch praktisch nach Stärke aufgeteilt', score: 3 },
+                    { text: 'Eher nicht, aber manchmal rutscht es mir raus', score: 2 },
+                    { text: 'Nein, ich würde nie nach Geschlecht aufteilen', score: 0 },
+                    { text: 'Ich sage: "Wer möchte tragen? Wer möchte sortieren?"', score: 0 }
+                ]
+            },
+            {
+                id: 10,
+                category: 'ableismus',
+                situation: 'Ein Kind fragt Sie laut: "Warum hat Leon so komische Ohren?" (Leon trägt Hörgeräte)',
+                question: 'Was antworten Sie?',
+                options: [
+                    { text: 'Psst, das fragt man nicht!', score: 3 },
+                    { text: 'Ich erkläre: "Das sind Hörgeräte, damit Leon besser hören kann"', score: 0 },
+                    { text: 'Ich bin peinlich berührt und lenke ab', score: 2 },
+                    { text: 'Ich frage Leon: "Möchtest du erklären, was das ist?"', score: 0 }
+                ]
+            },
+            {
+                id: 11,
+                category: 'klassismus',
+                situation: 'Ein Kind trägt oft die gleiche Kleidung und diese ist manchmal schmutzig.',
+                question: 'Was denken Sie über die Eltern?',
+                options: [
+                    { text: 'Die Eltern kümmern sich nicht ausreichend um ihr Kind', score: 3 },
+                    { text: 'Die Familie hat wahrscheinlich finanzielle Schwierigkeiten', score: 1 },
+                    { text: 'Ich weiß nicht, was dahintersteckt – ich sollte nachfragen', score: 0 },
+                    { text: 'Ich biete diskret Unterstützung an, ohne zu urteilen', score: 0 }
+                ]
+            },
+            {
+                id: 12,
+                category: 'linguizismus',
+                situation: 'Ein Kind erzählt mit starkem Akzent von seinem Wochenende. Andere Kinder kichern.',
+                question: 'Wie intervenieren Sie?',
+                options: [
+                    { text: 'Ich sage zum Kind: "Sprich langsamer und deutlicher"', score: 3 },
+                    { text: 'Ich ermahne die kichernden Kinder', score: 1 },
+                    { text: 'Ich sage: "Jeder Mensch spricht anders, das ist in Ordnung"', score: 0 },
+                    { text: 'Ich sage: "Mehrsprachigkeit ist toll. Weißt du, wie viele Sprachen wir hier sprechen?"', score: 0 }
+                ]
+            },
+            {
+                id: 13,
+                category: 'adultismus',
+                situation: 'Sie haben dem Kind versprochen, ein Buch vorzulesen. Jetzt sind Sie müde und möchten lieber Freispiel machen.',
+                question: 'Was tun Sie?',
+                options: [
+                    { text: 'Ich sage: "Heute nicht, morgen vielleicht" – das Kind versteht das', score: 2 },
+                    { text: 'Ich lenke das Kind ab: "Schau, die anderen spielen so schön!"', score: 3 },
+                    { text: 'Ich halte mein Versprechen, auch wenn ich müde bin', score: 0 },
+                    { text: 'Ich erkläre ehrlich: "Ich bin müde. Darf ich kürzer vorlesen?"', score: 0 }
+                ]
+            },
+            {
+                id: 14,
+                category: 'rassismus',
+                situation: 'Sie planen eine Projektwoche zum Thema "Afrika". Sie denken an Trommeln, Masken und Wildtiere.',
+                question: 'Finden Sie das problematisch?',
+                options: [
+                    { text: 'Nein, das sind doch typische Themen zu Afrika', score: 3 },
+                    { text: 'Vielleicht etwas klischeehaft, aber Kinder mögen das', score: 2 },
+                    { text: 'Ja, das ist stereotyp und zeigt Afrika nicht realistisch', score: 0 },
+                    { text: 'Ich würde moderne afrikanische Städte, Berufe, Alltag zeigen', score: 0 }
+                ]
+            },
+            {
+                id: 15,
+                category: 'sexismus',
+                situation: 'Ein Mädchen weint, weil es hingefallen ist. Ein Junge weint aus dem gleichen Grund.',
+                question: 'Reagieren Sie unterschiedlich?',
+                options: [
+                    { text: 'Ja, beim Jungen sage ich eher: "Ein Indianer kennt keinen Schmerz"', score: 3 },
+                    { text: 'Ich merke, dass ich beim Jungen ungeduldiger bin', score: 2 },
+                    { text: 'Nein, ich tröste beide gleich', score: 0 },
+                    { text: 'Ich achte darauf, beiden das gleiche Maß an Empathie zu geben', score: 0 }
+                ]
+            }
+        ];
+
+        let currentQuestion = 0;
+        let answers = {};
+        
+        function startTest() {
+            document.getElementById('startScreen').style.display = 'none';
+            document.getElementById('testScreen').style.display = 'block';
+            renderQuestion();
+        }
+
+        function renderQuestion() {
+            const container = document.getElementById('questionsContainer');
+            container.innerHTML = '';
+
+            questions.forEach((q, index) => {
+                const card = document.createElement('div');
+                card.className = 'question-card';
+                if (index === currentQuestion) card.classList.add('active');
+
+                card.innerHTML = `
+                    <div class="question-number">Frage ${q.id} von ${questions.length}</div>
+                    ${q.situation ? `<div class="situation-text">${q.situation}</div>` : ''}
+                    <div class="question-text">${q.question}</div>
+                    <div class="options">
+                        ${q.options.map((opt, optIndex) => `
+                            <label class="option ${answers[q.id] === optIndex ? 'selected' : ''}">
+                                <input type="radio" 
+                                       name="q${q.id}" 
+                                       value="${optIndex}"
+                                       ${answers[q.id] === optIndex ? 'checked' : ''}
+                                       onchange="selectOption(${q.id}, ${optIndex})">
+                                <span class="option-text">${opt.text}</span>
+                            </label>
+                        `).join('')}
+                    </div>
+                `;
+
+                container.appendChild(card);
+            });
+
+            updateProgress();
+            updateButtons();
+        }
+
+        function selectOption(questionId, optionIndex) {
+            answers[questionId] = optionIndex;
+            renderQuestion();
+        }
+
+        function updateProgress() {
+            const progress = (currentQuestion / questions.length) * 100;
+            document.getElementById('progressFill').style.width = progress + '%';
+        }
+
+        function updateButtons() {
+            const prevBtn = document.getElementById('prevBtn');
+            const nextBtn = document.getElementById('nextBtn');
+
+            prevBtn.style.display = currentQuestion > 0 ? 'block' : 'none';
+            
+            const currentQuestionAnswered = answers[questions[currentQuestion].id] !== undefined;
+            nextBtn.disabled = !currentQuestionAnswered;
+
+            if (currentQuestion === questions.length - 1 && currentQuestionAnswered) {
+                nextBtn.textContent = 'Auswertung anzeigen';
+            } else {
+                nextBtn.textContent = 'Weiter';
+            }
+        }
+
+        function prevQuestion() {
+            if (currentQuestion > 0) {
+                currentQuestion--;
+                renderQuestion();
+            }
+        }
+
+        function nextQuestion() {
+            if (currentQuestion < questions.length - 1) {
+                currentQuestion++;
+                renderQuestion();
+            } else {
+                showResults();
+            }
+        }
+
+        function showResults() {
+            document.getElementById('testScreen').style.display = 'none';
+            const resultScreen = document.getElementById('resultScreen');
+            resultScreen.className = 'result-section active';
+
+            const scores = {
+                linguizismus: 0,
+                rassismus: 0,
+                sexismus: 0,
+                ableismus: 0,
+                klassismus: 0,
+                adultismus: 0
+            };
+
+            questions.forEach(q => {
+                const answer = answers[q.id];
+                if (answer !== undefined) {
+                    scores[q.category] += q.options[answer].score;
+                }
+            });
+
+            const categories = {
+                linguizismus: {
+                    name: 'Linguizismus',
+                    description: 'Bewertung und Diskriminierung von Menschen aufgrund ihrer Sprache oder ihres Dialekts.',
+                    recommendations: [
+                        'Alle Sprachen in der Kita sichtbar machen (Begrüßungen, Lieder)',
+                        'Mehrsprachige Eltern zum Vorlesen einladen',
+                        'Niemals sagen: "Hier sprechen wir nur Deutsch!"',
+                        'Mehrsprachigkeit als Ressource wertschätzen'
+                    ]
+                },
+                rassismus: {
+                    name: 'Rassismus',
+                    description: 'Diskriminierung aufgrund von Hautfarbe, Herkunft oder kulturellem Hintergrund.',
+                    recommendations: [
+                        'Bücher mit diversen Hautfarben anschaffen',
+                        'Stifte für alle Hauttöne bereitstellen',
+                        'Stereotype in Kinderbüchern kritisch prüfen',
+                        'Kulturelle Vielfalt authentisch darstellen (nicht klischeehaft)'
+                    ]
+                },
+                sexismus: {
+                    name: 'Sexismus',
+                    description: 'Diskriminierung und Stereotype aufgrund des Geschlechts.',
+                    recommendations: [
+                        'Geschlechterstereotype aktiv hinterfragen',
+                        'Alle Spielbereiche für alle Kinder öffnen',
+                        'Sprache bewusst wählen (nicht "Jungs und Mädchen")',
+                        'Vielfältige Geschlechterrollen in Materialien zeigen'
+                    ]
+                },
+                ableismus: {
+                    name: 'Ableismus',
+                    description: 'Diskriminierung von Menschen mit Behinderungen.',
+                    recommendations: [
+                        'Spielregeln anpassen, damit alle mitmachen können',
+                        'Materialien mit Kindern mit Behinderungen anschaffen',
+                        'Barrierefreiheit in der Raumgestaltung beachten',
+                        'Niemals Kinder als "Schiedsrichter" abschieben'
+                    ]
+                },
+                klassismus: {
+                    name: 'Klassismus',
+                    description: 'Diskriminierung aufgrund sozialer Herkunft und ökonomischer Verhältnisse.',
+                    recommendations: [
+                        'Nicht nach Urlaub oder Besitz fragen',
+                        'Kostenfreie Alternativen für Ausflüge anbieten',
+                        'Sensibilität für verschiedene finanzielle Möglichkeiten',
+                        'Keine Bewertung von Eltern aufgrund ihres Einkommens'
+                    ]
+                },
+                adultismus: {
+                    name: 'Adultismus',
+                    description: 'Diskriminierung von Kindern aufgrund ihres Alters und Machtmissbrauch durch Erwachsene.',
+                    recommendations: [
+                        'Versprechen gegenüber Kindern einhalten',
+                        '"Nein" von Kindern respektieren',
+                        'Partizipation ernst nehmen',
+                        'Eigene Macht reflektieren und nicht missbrauchen'
+                    ]
+                }
+            };
+
+            let resultHTML = `
+                <div class="result-header">
+                    <h2>Ihre persönliche Auswertung</h2>
+                    <p>Reflexion ist der erste Schritt zur Veränderung</p>
+                </div>
+            `;
+
+            Object.keys(scores).forEach(key => {
+                const score = scores[key];
+                const maxScore = questions.filter(q => q.category === key).length * 3;
+                const percentage = (score / maxScore) * 100;
+                
+                let level = 'niedrig';
+                let levelText = 'Niedrig';
+                
+                if (percentage > 66) {
+                    level = 'hoch';
+                    levelText = 'Hoch';
+                } else if (percentage > 33) {
+                    level = 'mittel';
+                    levelText = 'Mittel';
+                }
+
+                const cat = categories[key];
+
+                resultHTML += `
+                    <div class="bias-card">
+                        <h3>
+                            ${cat.name}
+                            <span class="bias-level level-${level}">${levelText}</span>
+                        </h3>
+                        <p class="bias-description">${cat.description}</p>
+                        <p style="color: var(--color-text-secondary); font-size: 14px;">
+                            Ihre Punktzahl: ${score} von ${maxScore} möglichen Punkten
+                        </p>
+                        ${percentage > 33 ? `
+                            <div class="recommendations">
+                                <h4>🌱 Empfehlungen für Sie:</h4>
+                                <ul>
+                                    ${cat.recommendations.map(r => `<li>${r}</li>`).join('')}
+                                </ul>
+                            </div>
+                        ` : `
+                            <div style="color: var(--color-success); margin-top: 15px; padding: 15px; background: rgba(33, 128, 141, 0.08); border-radius: 8px;">
+                                ✓ In diesem Bereich zeigen Sie bereits eine hohe Sensibilität!
+                            </div>
+                        `}
+                    </div>
+                `;
+            });
+
+            resultHTML += `
+                <div class="reflection-box">
+                    <h3>Nächste Schritte zur Selbstreflexion</h3>
+                    <p><strong>1. Selbstreflexion im Team:</strong> Besprechen Sie Ihre Ergebnisse mit Kolleg*innen. Tauschen Sie sich über Situationen aus, in denen Sie unsicher waren.</p>
+                    
+                    <p><strong>2. Fortbildungen besuchen:</strong> Vertiefen Sie Ihr Wissen zu den Themen, bei denen Sie höhere Werte erzielt haben.</p>
+                    
+                    <p><strong>3. Praxis beobachten:</strong> Achten Sie bewusst auf Situationen im Alltag, in denen die gemessenen Vorurteile eine Rolle spielen könnten.</p>
+                    
+                    <p><strong>4. Materialien überprüfen:</strong> Schauen Sie kritisch auf Ihre Bücher, Spielmaterialien und Raumgestaltung.</p>
+                    
+                    <p><strong>5. Mit Kindern sprechen:</strong> Thematisieren Sie Vielfalt aktiv und altersgerecht mit den Kindern.</p>
+                </div>
+
+                <div class="reflection-box">
+                    <h3>Wichtiger Hinweis</h3>
+                    <p>Vorurteile zu haben ist menschlich. Entscheidend ist, dass wir sie erkennen und reflektieren. Dieser Test ist ein Anfang – vorurteilsbewusste Bildung ist ein lebenslanger Lernprozess.</p>
+                    <p style="margin-top: 15px;"><strong>Quellen und Weiterbildung:</strong></p>
+                    <ul style="margin-left: 20px; margin-top: 10px;">
+                        <li>Fachstelle Kinderwelten: <a href="https://situationsansatz.de" target="_blank" style="color: var(--color-primary);">situationsansatz.de</a></li>
+                        <li>KiTa-Fachtexte zur vorurteilsbewussten Bildung</li>
+                        <li>Anti-Bias-Netzwerk</li>
+                    </ul>
+                </div>
+
+                <button class="btn btn-primary" onclick="location.reload()" style="margin-top: 20px; width: 100%;">
+                    Test erneut durchführen
+                </button>
+            `;
+
+            resultScreen.innerHTML = resultHTML;
+        }
+    </script>
+</body>
+</html>
